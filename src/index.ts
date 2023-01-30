@@ -1,5 +1,6 @@
 import express from 'express'
 import 'express-async-errors'
+import cookieSession from 'cookie-session'
 import mongoose from 'mongoose'
 import { NotFoundError } from './errors/not-found-error'
 import { errorHandler } from './middlewares/error-handler'
@@ -9,7 +10,13 @@ import { signUpRouter } from './routes/signup'
 import { signInRouter } from './routes/singin'
 
 const app = express()
+app.set('trust proxy', true)
 app.use(express.json())
+app.use(cookieSession({
+  signed: true,
+  // secure: true,
+  keys: [''],
+}))
 
 app.use(currentUserRouter)
 app.use(signUpRouter)
@@ -23,8 +30,11 @@ app.all('*', async () => {
 app.use(errorHandler)
 
 const start = async () => {
-  mongoose.set('strictQuery', false)
+  // if (!process.env.JWT_KEY) {
+  //   throw new Error('JWT must be defined')
+  // }
   try {
+    mongoose.set('strictQuery', false)
     await mongoose.connect("mongodb://root:123456@mongo:27017");
     console.log('Connected to MongoDB ---- ')
   } catch (error) {
