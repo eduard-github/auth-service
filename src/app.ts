@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import 'express-async-errors'
 import cookieSession from 'cookie-session'
 
@@ -12,6 +13,7 @@ import { signInRouter } from './routes/singin'
 const app = express()
 
 app.set('trust proxy', true)
+app.use(cors())
 app.use(express.json())
 app.use(cookieSession({
   signed: true,
